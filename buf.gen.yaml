@@ -1,0 +1,9 @@
+version: v2
+clean: true
+plugins:
+  - remote: buf.build/grpc/python:v1.70.1
+    out: src/grpc_proto
+  - remote: buf.build/protocolbuffers/python:v29.3
+    out: src/grpc_proto
+  - remote: buf.build/protocolbuffers/pyi:v29.3
+    out: src/grpc_proto
