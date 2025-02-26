@@ -1,5 +1,8 @@
 import torch
 
+from domains.recommend.domain.models import UserHistory, UserRecommendation
+from domains.recommend.port.output.infer import Infer
+
 torch.manual_seed(0)
 
 
@@ -14,3 +17,18 @@ class Model(torch.nn.Module):
         scores = user_embedding @ self._item_embeddings.T
         topk = torch.topk(scores, k=self._num_recommendations)
         return topk.indices
+
+
+class TorchInfer(Infer):
+    def __init__(self, num_recommendations: int, device: str = "cpu") -> None:
+
+        self._model = Model(num_recommendations, device)
+        self._device = device
+
+    def infer(self, user_history: UserHistory) -> UserRecommendation:
+        t_user_history = torch.tensor(user_history.item_ids, device=self._device)
+        with torch.no_grad():
+            t_recommendations = self._model(t_user_history)
+            t_recommendations = t_recommendations.cpu().tolist()
+
+        return UserRecommendation(item_ids=t_recommendations)

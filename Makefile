@@ -35,20 +35,9 @@ shell:
 test:
 	docker compose exec app pytest test/
 
-test-unit:
-	docker compose exec app pytest test/unit
-
 down:
 	docker compose down --remove-orphans
 
-migrate:
-	docker compose exec app alembic upgrade head
-
-ui:
-	docker compose exec app python -m command.ui
-
-report_stuck:
-	docker compose exec app python -m command.stuck_jobs_reporter
 
 #
 # gRPC
@@ -63,6 +52,14 @@ local-api-proto-gen:
     	--workdir /workspace ${BUF_IMG} \
     	generate /workspace
 
+
+.PHONY: proto-lint
+proto-lint:
+	docker run \
+		--rm \
+    	--volume "${PROJECT_DIR}:/workspace" \
+    	--workdir /workspace ${BUF_IMG} \
+    	lint /workspace
 
 fixperm:
 	sudo chown -R $(CURRENT_UID):$(CURRENT_GID) .

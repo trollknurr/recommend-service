@@ -1,0 +1,15 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        WITH_DEV: 1
+        WITH_CUDA: 0
+    ports:
+      - 50051:50051
+    volumes:
+      - .:/app
+    command: tail -f /dev/null
+    env_file:
+      - .env.dev
