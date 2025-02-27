@@ -31,6 +31,9 @@ rebuild:
 shell:
 	docker compose exec app bash
 
+logs:
+	docker compose logs -f --tail 100
+
 .PHONY: test
 test:
 	docker compose exec app pytest test/

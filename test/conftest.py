@@ -1,3 +1,6 @@
+import logging
+from loguru import logger
+
 from typing import Generator
 
 import pytest
