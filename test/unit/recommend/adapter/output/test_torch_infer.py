@@ -1,12 +1,23 @@
-import torch
+import pytest
 
-from domains.recommend.adapter.output.torch_infer import Model
+from domains.recommend.domain.models import UserHistory
+from domains.recommend.port.output.infer import InferError
+from entrypoint.grpc_server.container import Container
+from unit.recommend.adapter.output.conftest import ERROR_INPUTS, ETHALON_PAIRS
 
 
-def test_model_infer() -> None:
-    model = Model()
-    user_history = torch.tensor([1, 2, 3, 4])
+@pytest.mark.parametrize(("user_history", "recommendations"), ETHALON_PAIRS)
+def test_model_infer(user_history: list[int], recommendations: list[int], test_container: Container) -> None:
+    infer = test_container.torch_infer()
 
-    recommendations = model(user_history)
+    predictions = infer.infer(UserHistory(item_ids=user_history))
 
-    assert torch.equal(recommendations, torch.tensor([5510, 1021, 9640, 1682, 2544, 3281, 874, 8599, 3572, 2766]))
+    assert set(predictions.item_ids) == set(recommendations)
+
+
+@pytest.mark.parametrize("user_history", ERROR_INPUTS)
+def test_model_infer_error(user_history: list[int], test_container: Container) -> None:
+    infer = test_container.torch_infer()
+
+    with pytest.raises(InferError):
+        infer.infer(UserHistory(item_ids=user_history))

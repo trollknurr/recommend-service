@@ -1,10 +1,23 @@
-from domains.recommend.adapter.output.onnx_infer import OnnxInfer
-from entrypoint.config import Config
+import pytest
+
+from domains.recommend.domain.models import UserHistory
+from domains.recommend.port.output.infer import InferError
+from entrypoint.grpc_server.container import Container
+from unit.recommend.adapter.output.conftest import ERROR_INPUTS, ETHALON_PAIRS
 
 
-def test_onnx_model_infer(config: Config) -> None:
-    onnx_infer = OnnxInfer(config.PROJECT_DIR / config.ONNX_MODEL_PATH, config.NUM_RECOMMENDATIONS)
+@pytest.mark.parametrize(("user_history", "recommendations"), ETHALON_PAIRS)
+def test_onnx_model_infer(test_container: Container, user_history: list[int], recommendations: list[int]) -> None:
+    onnx_infer = test_container.onnx_infer()
 
-    recommendations = onnx_infer._infer([1, 2, 3, 4])
+    predictions = onnx_infer.infer(UserHistory(item_ids=user_history))
 
-    assert set(recommendations) == {5510, 1021, 9640, 1682, 2544, 3281, 874, 8599, 3572, 2766}
+    assert set(predictions.item_ids) == set(recommendations)
+
+
+@pytest.mark.parametrize("user_history", ERROR_INPUTS)
+def test_onnx_model_infer_error(test_container: Container, user_history: list[int]) -> None:
+    onnx_infer = test_container.onnx_infer()
+
+    with pytest.raises(InferError):
+        onnx_infer.infer(UserHistory(item_ids=user_history))

@@ -13,7 +13,7 @@ class Config(BaseSettings):
     GRPC_TOKEN: SecretStr | None = Field(default=None)
 
     PROJECT_DIR: Path = Field(default_factory=lambda: Path(__file__).parent.parent.parent)
-    ONNX_MODEL_PATH: Path = Field(default=Path("weights/model.onnx"))
+    WEIGHTS_DIR: Path = Field(default_factory=lambda: Path("weights"))
 
     NUM_RECOMMENDATIONS: int = Field(default=10)
     DEVICE: str = Field(default="cpu")

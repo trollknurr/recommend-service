@@ -10,6 +10,6 @@ services:
       - 50051:50051
     volumes:
       - .:/app
-    command: tail -f /dev/null
+    command: python -m src.entrypoint.grpc_server
     env_file:
       - .env.dev

@@ -26,6 +26,7 @@ pytest = "^8.2.2"
 pytest-mock = "^3.14.0"
 pyright = "^1.1.388"
 onnx = "^1.17.0"
+click = "^8.1.8"
 
 
 [tool.poetry.group.dev]
