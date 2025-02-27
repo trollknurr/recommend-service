@@ -1,4 +1,4 @@
-name: Build and Push Image
+name: Build, Test and Push Image
 
 on:
   push:
@@ -21,7 +21,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build image
+      - name: Build test image
+        run: docker build . --file Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}" --arg WITH_DEV=1
+      
+      - name: Run tests
+        run: docker run $IMAGE_NAME pytest tests/
+      
+      - name: Build prod image
         run: docker build . --file Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}"
 
       - name: Log in to registry
