@@ -3,7 +3,7 @@ import pytest
 from domains.recommend.domain.models import UserHistory
 from domains.recommend.port.output.infer import InferError
 from entrypoint.grpc_server.container import Container
-from unit.recommend.adapter.output.conftest import ERROR_INPUTS, ETHALON_PAIRS
+from recommend.adapter.output.conftest import ERROR_INPUTS, ETHALON_PAIRS
 
 
 @pytest.mark.parametrize(("user_history", "recommendations"), ETHALON_PAIRS)

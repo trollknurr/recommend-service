@@ -15,7 +15,6 @@ dependency-injector = "^4.41.0"
 pydantic-settings = "^2.3.3"
 grpcio = "^1.63.0"
 grpcio-reflection = "^1.63.0"
-torch = "^2.6.0"
 onnxruntime = "^1.20.1"
 loguru = "^0.7.3"
 
@@ -25,12 +24,28 @@ black = "^24.4.2"
 pytest = "^8.2.2"
 pytest-mock = "^3.14.0"
 pyright = "^1.1.388"
-onnx = "^1.17.0"
 click = "^8.1.8"
+
+[tool.poetry.group.model.dependencies]
+onnx = "^1.17.0"
+torch = [
+    {platform = "linux", version = "^2.6.0", source = "torch-cpu"},
+    {platform = "darwin", version = "^2.6.0", source = "pypi"}
+]
 
 
 [tool.poetry.group.dev]
 optional = true
+
+[tool.poetry.group.model]
+optional = true
+
+
+[[tool.poetry.source]]
+name = "torch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+priority = "explicit"
+
 
 [build-system]
 requires = ["poetry-core>=1.6"]
@@ -213,14 +228,19 @@ extend-exclude = '''
 pythonpath = [
     "src"
 ]
+log_cli = true
+log_cli_level = "INFO"
+log_cli_format = "%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)"
+log_cli_date_format = "%Y-%m-%d %H:%M:%S"
 
 [tool.pyright]
 typeCheckingMode = "standard"
 include = ["src"]
 exclude = [
-    "src/experimental",
     "src/grpc_proto",
     "src/**/container.py",
+    "src/entrypoint/model_convert",
+    "src/domains/recommend/adapter/output/torch_infer.py",
 ]
 reportMissingImports = "error"
 reportMissingTypeStubs = false

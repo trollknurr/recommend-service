@@ -9,6 +9,7 @@ PROJECT_DIR ?= $(shell pwd)
 
 BUF_IMG ?= bufbuild/buf:1.50.0
 
+IMAGE_NAME ?= recommend-service
 
 format:
 	black src/ test/
@@ -21,6 +22,14 @@ lint:
 	pyright
 
 
+lintC:
+	docker run --rm $(IMAGE_NAME) black --check src/
+	docker run --rm $(IMAGE_NAME) ruff check src/
+	docker run --rm $(IMAGE_NAME) pyright
+
+testC:
+	docker run --rm $(IMAGE_NAME) pytest test/ -vv
+
 #
 # Docker
 #
@@ -30,6 +39,9 @@ rebuild:
 
 shell:
 	docker compose exec app bash
+
+logs:
+	docker compose logs -f --tail 100
 
 .PHONY: test
 test:
@@ -61,5 +73,26 @@ proto-lint:
     	--workdir /workspace ${BUF_IMG} \
     	lint /workspace
 
+
+#
+# ONNX
+#
+model-convert: export PYTHONPATH=src:src/grpc_proto
+model-convert:
+	python -m entrypoint.model_convert
+
+
+#
+# Test client
+#
+
+test-client: export PYTHONPATH=src:src/grpc_proto
+test-client:
+	python -m entrypoint.test_client
+
+
+#
+# Utils
+# 
 fixperm:
 	sudo chown -R $(CURRENT_UID):$(CURRENT_GID) .

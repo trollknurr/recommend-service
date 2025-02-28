@@ -1,0 +1,70 @@
+name: Build, Test and Push Image
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  
+
+env:
+  IMAGE_NAME: recommend-service
+#
+jobs:
+  # This pushes the image to GitHub Packages.
+  push:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+      
+      id-token: 'write'
+      #
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build test image
+        run: docker build . --file Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}" --build-arg WITH_DEV=1
+      
+      - name: Run lint
+        run: make lintC
+
+      - name: Run tests
+        run: make testC
+      
+      - name: Build prod image
+        run: docker build . --file Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}"
+
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_KEY  }}
+      
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
+
+      - name: 'Docker auth'
+        run: gcloud auth configure-docker europe-west1-docker.pkg.dev --quiet
+
+      - name: 'Push image'
+        run: |
+          IMAGE_ID=${{ secrets.GCP_REPO  }}/$IMAGE_NAME
+
+          # This strips the git ref prefix from the version.
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          # This strips the "v" prefix from the tag name.
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+          # This uses the Docker `latest` tag convention.
+          [ "$VERSION" == "main" ] && VERSION=latest
+          echo IMAGE_ID=$IMAGE_ID
+          echo VERSION=$VERSION
+          docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
+          docker push $IMAGE_ID:$VERSION
+          
+          echo "IMAGE_ID=$IMAGE_ID:$VERSION" >> $GITHUB_ENV
+      
+      - id: 'deploy'
+        uses: 'google-github-actions/deploy-cloudrun@v2'
+        with:
+          service: 'recommend-service'
+          region: 'europe-west1'
+          image: ${{ env.IMAGE_ID }}
