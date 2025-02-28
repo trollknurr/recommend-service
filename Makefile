@@ -73,5 +73,16 @@ proto-lint:
     	--workdir /workspace ${BUF_IMG} \
     	lint /workspace
 
+
+#
+# ONNX
+#
+model-convert: export PYTHONPATH=src:src/grpc_proto
+model-convert:
+	python -m entrypoint.model_convert
+
+#
+# Utils
+# 
 fixperm:
 	sudo chown -R $(CURRENT_UID):$(CURRENT_GID) .
