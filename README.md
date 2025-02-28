@@ -32,6 +32,10 @@ To start development:
   
 Check out `Makefile` for more useful commands.
 
+## Running test client
+
+Ensure optional dependency group `dev` is installed (`poetry install --with dev`)
+
 
 ## Building protobuf
 

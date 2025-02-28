@@ -81,6 +81,16 @@ model-convert: export PYTHONPATH=src:src/grpc_proto
 model-convert:
 	python -m entrypoint.model_convert
 
+
+#
+# Test client
+#
+
+test-client: export PYTHONPATH=src:src/grpc_proto
+test-client:
+	python -m entrypoint.test_client
+
+
 #
 # Utils
 # 
