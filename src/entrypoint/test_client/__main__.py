@@ -17,7 +17,11 @@ EXAMPLES = [
 @click.option("--host", default="localhost", help="GRPC host")
 @click.option("--port", default=50051, help="GRPC port")
 def main(host: str, port: int) -> None:
-    channel = grpc.insecure_channel(f"{host}:{port}")
+    if host != "localhost":
+        channel = grpc.secure_channel(host, grpc.ssl_channel_credentials())
+    else:
+        channel = grpc.insecure_channel(f"{host}:{port}")
+
     stub = recommend_api_pb2_grpc.RecommenderServiceStub(channel)
 
     for example in EXAMPLES:

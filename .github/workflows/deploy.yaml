@@ -59,4 +59,11 @@ jobs:
           echo VERSION=$VERSION
           docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
-        
+          
+          echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
+      
+      - id: 'deploy'
+        uses: 'google-github-actions/deploy-cloudrun@v2'
+        with:
+          service: 'recommend-service'
+          image: ${{ env.IMAGE_ID }}

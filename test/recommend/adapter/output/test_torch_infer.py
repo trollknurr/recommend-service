@@ -5,7 +5,6 @@ from domains.recommend.port.output.infer import InferError
 from entrypoint.grpc_server.container import Container
 from recommend.adapter.output.conftest import ERROR_INPUTS, ETHALON_PAIRS
 
-
 torch = pytest.importorskip("torch")
 
 

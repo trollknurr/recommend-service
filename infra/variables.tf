@@ -12,3 +12,8 @@ variable "artifact_repository_id" {
   type        = string
   description = "Artifact repository ID"
 }
+
+variable "image_name" {
+  type        = string
+  description = "Image name"
+}

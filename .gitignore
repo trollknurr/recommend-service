@@ -163,7 +163,11 @@ cython_debug/
 .terraform/
 .ruff_cache
 
+*.tfstate
+*.tfstate.backup
+
 terraform.tfvars
+credentials/
 
 qdrant_storage
 postgres_storage
