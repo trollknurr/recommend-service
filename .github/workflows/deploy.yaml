@@ -60,7 +60,7 @@ jobs:
           docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
           
-          echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
+          echo "IMAGE_ID=$IMAGE_ID:$VERSION" >> $GITHUB_ENV
       
       - id: 'deploy'
         uses: 'google-github-actions/deploy-cloudrun@v2'

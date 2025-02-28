@@ -35,6 +35,8 @@ Check out `Makefile` for more useful commands.
 ## Running test client
 
 Ensure optional dependency group `dev` is installed (`poetry install --with dev`)
+Call test client entrypoint `python -m entrypoint.test_client`.
+It accept `--host` cli argument, by default it is `localhost` for testing in container.
 
 
 ## Building protobuf
