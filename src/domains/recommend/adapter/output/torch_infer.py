@@ -27,8 +27,7 @@ class TorchInfer(Infer):
     def infer(self, user_history: UserHistory) -> UserRecommendation:
         try:
             t_user_history = torch.tensor(user_history.item_ids, device=self._device)
-            with torch.no_grad():
-                t_recommendations = self._model(t_user_history)
+            t_recommendations = self._model(t_user_history)
             t_recommendations = t_recommendations.cpu().tolist()
 
             return UserRecommendation(item_ids=t_recommendations)

@@ -11,13 +11,32 @@ Service for recommendations, main refs:
 
 * `src` - Bussiness logic and execution code (entrypoints)
 * `test` - Some tests for project
+* `weight` - ONNX exported models dir
 
 In `src` dir two main packages:
 
 * `domain` - Business logic of application, that divided on ports, adapters and services
 * `entrypoint` - Different entrypoints of the application
 
-`src/entrypoint/config.py` is main config module.
+`src/entrypoint/config.py` is main config module, it takes values from environment.
+
+### Model storage
+
+Currently, all exported models stored in `weights` directory. Amount of returned reccomendation is added to model name.
+When service is starting, it check directory for model that return configured amount of recommendation.
+
+It is not flexible solution, however it is not likely that this configurable value will be changed very often.
+
+As minus of this solution:
+* If model grow in size, hard to keep it git
+* No metadata for model
+* Hard to share model between projects (use same file)
+
+As alternative solution, models can be stored in MLflow registry. Using MLflow registry will solve issues with:
+
+* Model versioning and metadata tracking
+* Sharing models between projects (central storage)
+* Model size limitations (no need to store in git)
 
 
 ## Set up local environment
@@ -53,6 +72,12 @@ Ensure optional dependency group `model` is installed (`poetry install --with mo
 To run outside of container `make model-convert`, inside container `python -m entrypoint.model_convert` (because there is no `make` tool)
 Torch model will be initialized according to values from `config.py` and then exported to ONNX and save to `weights/` directory.
 
+To ensure model correctness, run tests with install `model` dependecy group
+
 ## TODO:
 
 * Build/dependencies for onnxruntime for CUDA / CoreML
+* Terraform state in shared env (s3)
+* Protobuf add validation
+* Add OpenTelemetry metrics (instrumentation for gRPC and manual histogram for inference time)
+* Add OpenTelemetry tracing, add support for request id
