@@ -26,8 +26,11 @@ jobs:
       - name: Build test image
         run: docker build . --file Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}" --build-arg WITH_DEV=1
       
+      - name: Run lint
+        run: make lintC
+
       - name: Run tests
-        run: docker run $IMAGE_NAME pytest test/ -vv
+        run: make testC
       
       - name: Build prod image
         run: docker build . --file Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}"

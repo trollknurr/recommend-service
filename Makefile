@@ -9,6 +9,7 @@ PROJECT_DIR ?= $(shell pwd)
 
 BUF_IMG ?= bufbuild/buf:1.50.0
 
+IMAGE_NAME ?= recommend-service
 
 format:
 	black src/ test/
@@ -20,6 +21,14 @@ lint:
 	ruff check src/
 	pyright
 
+
+lintC:
+	docker run --rm $(IMAGE_NAME) black --check src/
+	docker run --rm $(IMAGE_NAME) ruff check src/
+	docker run --rm $(IMAGE_NAME) pyright
+
+testC:
+	docker run --rm $(IMAGE_NAME) pytest test/ -vv
 
 #
 # Docker

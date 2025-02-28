@@ -4,8 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        WITH_DEV: 0
-        WITH_CUDA: 0
+        WITH_DEV: 1
     ports:
       - 50051:50051
     volumes:
