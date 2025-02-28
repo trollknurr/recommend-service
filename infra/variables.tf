@@ -6,7 +6,7 @@ variable "project_id" {
 variable "region" {
   description = "The GCP region"
   type        = string
-} 
+}
 
 variable "artifact_repository_id" {
   type        = string

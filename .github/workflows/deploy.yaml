@@ -66,4 +66,5 @@ jobs:
         uses: 'google-github-actions/deploy-cloudrun@v2'
         with:
           service: 'recommend-service'
+          region: 'europe-west1'
           image: ${{ env.IMAGE_ID }}
