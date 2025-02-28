@@ -6,6 +6,9 @@ from entrypoint.grpc_server.container import Container
 from recommend.adapter.output.conftest import ERROR_INPUTS, ETHALON_PAIRS
 
 
+torch = pytest.importorskip("torch")
+
+
 @pytest.mark.parametrize(("user_history", "recommendations"), ETHALON_PAIRS)
 def test_model_infer(user_history: list[int], recommendations: list[int], test_container: Container) -> None:
     from domains.recommend.adapter.output.torch_infer import TorchInfer
