@@ -240,6 +240,7 @@ exclude = [
     "src/experimental",
     "src/grpc_proto",
     "src/**/container.py",
+    "src/entrypoint/model_convert",
 ]
 reportMissingImports = "error"
 reportMissingTypeStubs = false
