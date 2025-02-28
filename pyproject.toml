@@ -237,10 +237,10 @@ log_cli_date_format = "%Y-%m-%d %H:%M:%S"
 typeCheckingMode = "standard"
 include = ["src"]
 exclude = [
-    "src/experimental",
     "src/grpc_proto",
     "src/**/container.py",
     "src/entrypoint/model_convert",
+    "src/domains/recommend/adapter/output/torch_infer.py",
 ]
 reportMissingImports = "error"
 reportMissingTypeStubs = false

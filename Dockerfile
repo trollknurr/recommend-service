@@ -2,7 +2,7 @@ FROM python:3.11-slim
 
 ARG WITH_DEV
 
-ENV POETRY_VERSION=2.1.1 \
+ENV POETRY_VERSION=2.1 \
     POETRY_VIRTUALENVS_CREATE=false \
     POETRY_CACHE_DIR='/var/cache/pypoetry'
 
