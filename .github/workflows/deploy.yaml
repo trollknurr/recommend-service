@@ -17,6 +17,8 @@ jobs:
     permissions:
       packages: write
       contents: read
+      
+      id-token: 'write'
       #
     steps:
       - uses: actions/checkout@v4
@@ -30,15 +32,20 @@ jobs:
       - name: Build prod image
         run: docker build . --file Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}"
 
-      - name: Log in to registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-        #
-      - name: Push image
-        run: |
-          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_KEY  }}
+      
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
 
-          # This changes all uppercase characters to lowercase.
-          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+      - name: 'Docker auth'
+        run: gcloud auth configure-docker europe-west1-docker.pkg.dev --quiet
+
+      - name: 'Push image'
+        run: |
+          IMAGE_ID=${{ secrets.GCP_REPO  }}/$IMAGE_NAME
+
           # This strips the git ref prefix from the version.
           VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
           # This strips the "v" prefix from the tag name.
@@ -49,3 +56,4 @@ jobs:
           echo VERSION=$VERSION
           docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
+        

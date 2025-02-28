@@ -23,3 +23,4 @@ ENV PYTHONPATH=/app/src:/app/src/grpc_proto:$PYTHONPATH
 
 COPY . .
 
+CMD ["python", "-m", "entrypoint.grpc_server"]
