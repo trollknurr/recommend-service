@@ -51,6 +51,8 @@ To start development:
   
 Check out `Makefile` for more useful commands.
 
+Python dependencies managed by `poetry`, ref `pyproject.toml` and to official documentation for usage details.
+
 ## Running test client
 
 Ensure optional dependency group `dev` is installed (`poetry install --with dev`)
